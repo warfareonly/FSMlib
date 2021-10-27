@@ -19,7 +19,7 @@ VPATH = FSMlib:FSMlib/Model:FSMlib/Sequences:FSMlib/Testing:FSMlib/Learning:FSMd
 BUILD_DIR = x64
 FSMLIB_DIR = FSMlib
 
-FSMLIB_TARGET = $(BUILD_DIR)/FSMlib.exe
+FSMLIB_TARGET = $(BUILD_DIR)/FSMlib.bin
 
 $(shell mkdir -p $(BUILD_DIR)/$(FSMLIB_DIR) >/dev/null)
 
@@ -62,4 +62,4 @@ $(BUILD_DIR)/$(FSMLIB_DIR)/%.d: ;
 
 .PHONY : clean
 clean :
-	rm $(BUILD_DIR)/$(FSMLIB_DIR)/*.o $(BUILD_DIR)/$(FSMLIB_DIR)/*.d $(FSMLIB_TARGET)
+	rm -rv  $(BUILD_DIR)/$(FSMLIB_DIR)/*.o $(BUILD_DIR)/$(FSMLIB_DIR)/*.d $(FSMLIB_TARGET)

@@ -106,6 +106,8 @@ public:
 	void generate(state_t numberOfStates, input_t numberOfInputs, output_t numberOfOutputs);
 	bool load(string fileName);
 
+	bool load_from_cin();
+
 	//<-- STORING -->//
 
 	string save(string path);
@@ -185,6 +187,10 @@ protected:
 	bool loadTransitionOutputs(ifstream& file);
 	bool loadTransitions(ifstream& file);
 	
+	bool loadStateOutputs(istream& file);
+	bool loadTransitionOutputs(istream& file);
+	bool loadTransitions(istream& file);
+
 	void saveInfo(ofstream& file);
 	void saveStateOutputs(ofstream& file);
 	void saveTransitionOutputs(ofstream& file);

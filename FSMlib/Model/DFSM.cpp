@@ -18,6 +18,8 @@
 #include "stdafx.h"
 
 #include "DFSM.h"
+#include<fstream>
+
 
 // helps to generate connected state diagram
 static bool isReacheableWithoutEdge(DFSM * fsm, state_t start, input_t input) {
@@ -749,6 +751,126 @@ bool DFSM::load(string fileName) {
 	file.close();
 	return true;
 }
+
+bool DFSM::load_from_cin() {
+	istream &file = std::cin;
+	machine_type_t type;
+	bool isReduced;
+	state_t numberOfStates, maxState;
+	input_t numberOfInputs;
+	output_t numberOfOutputs;
+	file >> type >> isReduced >> numberOfStates >> numberOfInputs >> numberOfOutputs >> maxState;
+	if (_type != type) {
+		ERROR_MESSAGE("%s::load - bad type of FSM (%d)", machineTypeNames[_type], type);
+		return false;
+	}
+	if (numberOfStates < 0) {
+		ERROR_MESSAGE("%s::load - the number of states cannot be negative", machineTypeNames[_type]);
+		return false;
+	}
+	if (numberOfInputs < 0) {
+		ERROR_MESSAGE("%s::load - the number of inputs cannot be negative", machineTypeNames[_type]);
+		return false;
+	}
+	if (numberOfOutputs < 0) {
+		ERROR_MESSAGE("%s::load - the number of outputs cannot be negative", machineTypeNames[_type]);
+		return false;
+	}
+	if (maxState < numberOfStates) {
+		ERROR_MESSAGE("%s::load - the number of states cannot be greater than the greatest state ID", machineTypeNames[_type]);
+		return false;
+	}
+	output_t maxOutputs = getMaxOutputs(numberOfStates, numberOfInputs);
+	if (numberOfOutputs > maxOutputs) {
+		ERROR_MESSAGE("%s::load - the number of outputs should not be greater than the maximum value of %d. Consider minimization!",
+			machineTypeNames[_type], maxOutputs);
+	}
+	_numberOfStates = numberOfStates;
+	_numberOfInputs = numberOfInputs;
+	_numberOfOutputs = numberOfOutputs;
+	//_type is set
+	_isReduced = isReduced;
+	_usedStateIDs.clear();
+	_usedStateIDs.resize(maxState, false);
+	if ((_isOutputState && !loadStateOutputs(file)) || (_isOutputTransition && !loadTransitionOutputs(file))
+		|| !loadTransitions(file)) {
+		return false;
+	}
+	return true;
+}
+
+bool DFSM::loadStateOutputs(istream& file) {
+	state_t tmpState;
+	output_t output;
+	_outputState.resize(_usedStateIDs.size(), DEFAULT_OUTPUT);
+	for (state_t state = 0; state < _numberOfStates; state++) {
+		file >> tmpState;
+		if ((tmpState >= _usedStateIDs.size()) || (_usedStateIDs[tmpState])) {
+			ERROR_MESSAGE("%s::loadStateOutputs - bad state output line %d", machineTypeNames[_type], state);
+			return false;
+		}
+		_usedStateIDs[tmpState] = true;
+		file >> output;
+		if ((output >= _numberOfOutputs) && (output != DEFAULT_OUTPUT)) {
+			ERROR_MESSAGE("%s::loadStateOutputs - bad state output line %d, output %d", machineTypeNames[_type], state, output);
+			return false;
+		}
+		_outputState[tmpState] = output;
+	}
+	return true;
+}
+
+bool DFSM::loadTransitionOutputs(istream& file) {
+	state_t tmpState;
+	output_t output;
+	_outputTransition.resize(_usedStateIDs.size());
+	for (state_t state = 0; state < _usedStateIDs.size(); state++) {
+		_outputTransition[state].resize(_numberOfInputs);
+	}
+	for (state_t state = 0; state < _numberOfStates; state++) {
+		file >> tmpState;
+		if ((tmpState >= _usedStateIDs.size()) || (_isOutputState != _usedStateIDs[tmpState])) {
+			ERROR_MESSAGE("%s::loadTransitionOutputs - bad transition output line %d", machineTypeNames[_type], state);
+			return false;
+		}
+		_usedStateIDs[tmpState] = true;
+		for (input_t input = 0; input < _numberOfInputs; input++) {
+			file >> output;
+			if ((output >= _numberOfOutputs) && (output != DEFAULT_OUTPUT)) {
+				ERROR_MESSAGE("%s::loadTransitionOutputs - bad transition output line %d, input %d, output %d",
+					machineTypeNames[_type], state, input, output);
+				return false;
+			}
+			_outputTransition[tmpState][input] = output;
+		}
+	}
+	return true;
+}
+
+bool DFSM::loadTransitions(istream& file) {
+	state_t tmpState, nextState;
+	_transition.resize(_usedStateIDs.size());
+	for (state_t state = 0; state < _usedStateIDs.size(); state++) {
+		_transition[state].resize(_numberOfInputs);
+	}
+	for (state_t state = 0; state < _numberOfStates; state++) {
+		file >> tmpState;
+		if ((tmpState >= _usedStateIDs.size()) || (!_usedStateIDs[tmpState])) {
+			ERROR_MESSAGE("%s::loadTransitions - bad transition line %d", machineTypeNames[_type], state);
+			return false;
+		}
+		for (input_t input = 0; input < _numberOfInputs; input++) {
+			file >> nextState;
+			if ((nextState != NULL_STATE) && ((nextState >= _usedStateIDs.size()) || (!_usedStateIDs[nextState]))) {
+				ERROR_MESSAGE("%s::loadTransitions - bad transition line %d, input %d", machineTypeNames[_type], state, input);
+				return false;
+			}
+			_transition[tmpState][input] = nextState;
+		}
+	}
+	return true;
+}
+
 
 string DFSM::getFilename() {
 	string filename(machineTypeNames[_type]);

@@ -87,6 +87,31 @@ namespace FSMmodel {
 		return fsm;
 	}
 
+	unique_ptr<DFSM> loadFSM_from_cin() {
+		return loadFSM_from_cin(TYPE_MEALY);
+	}
+	unique_ptr<DFSM> loadFSM_from_cin(machine_type_t type) {
+		unique_ptr<DFSM> fsm;
+		switch (type) {
+		case TYPE_DFSM:
+			fsm = move(make_unique<DFSM>());
+			break;
+		case TYPE_MEALY:
+			fsm = move(make_unique<Mealy>());
+			break;
+		case TYPE_MOORE:
+			fsm = move(make_unique<Moore>());
+			break;
+		case TYPE_DFA:
+			fsm = move(make_unique<DFA>());
+			break;
+		default:
+			return nullptr;
+		}
+		if (!fsm->load_from_cin()) return nullptr;
+		return fsm;
+	}
+
 	unique_ptr<DFSM> duplicateFSM(const unique_ptr<DFSM>& origFSM) {
 		switch (origFSM->getType())
 		{

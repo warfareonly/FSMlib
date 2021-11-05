@@ -43,6 +43,14 @@ namespace FSMmodel {
 	FSMLIB_API unique_ptr<DFSM> loadFSM(string filename);
 
 	/**
+	* Loads a FSM from the standard input.
+	*
+	* @return a pointer to the loaded FSM, or nullptr if loading was not succesful
+	*/
+	FSMLIB_API unique_ptr<DFSM> loadFSM_from_cin();
+	FSMLIB_API unique_ptr<DFSM> loadFSM_from_cin(machine_type_t type);
+
+	/**
 	* Creates a copy of provided finite state machine.
 	*
 	* @param fsm

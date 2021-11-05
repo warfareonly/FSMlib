@@ -15,11 +15,11 @@
 # FSMlib. If not, see <http://www.gnu.org/licenses/>.
 #
 
-VPATH = FSMlib:FSMlib/Model:FSMlib/Sequences:FSMlib/Testing:FSMlib/Learning:FSMdevel
+VPATH = FSMlib:FSMlib/Model:FSMlib/Sequences:FSMlib/Testing:FSMdevel
 BUILD_DIR = x64
-FSMLIB_DIR = FSMlib
+FSMLIB_DIR = FSMlib_bin
 
-FSMLIB_TARGET = $(BUILD_DIR)/FSMlib.bin
+FSMLIB_TARGET = $(BUILD_DIR)/FSMlib
 
 $(shell mkdir -p $(BUILD_DIR)/$(FSMLIB_DIR) >/dev/null)
 
@@ -31,13 +31,7 @@ objects = stdafx.o FSMlib.o PrefixSet.o UnionFind.o \
 	StateVerifyingSequence.o HomingSequence.o SynchronizingSequence.o \
 	W-method.o Wp-method.o HSI-method.o H-method.o SPY-method.o \
 	PDS-method.o ADS-method.o SVS-method.o SPYH-method.o S-method.o \
-	C-method.o Ma-method.o Mg-method.o FaultCoverageChecker.o \
-	BlackBoxDFSM.o TeacherBB.o TeacherDFSM.o TeacherRL.o \
-	Lstar.o DiscriminationTreeAlgorithm.o ObservationPackAlgorithm.o \
-	TTT.o GoodSplit.o QuotientAlgorithm.o \
-	H-learner.o SPY-learner.o S-learner.o main.o
-#	FSMgenerator.o HSIdesignComparison.o MachinesAnalysis.o \
-	experimenterTesting.o experimenterLearning.o main.o
+	main.o
 OBJ = $(addprefix $(BUILD_DIR)/$(FSMLIB_DIR)/,$(objects))
 
 all: FSMlib

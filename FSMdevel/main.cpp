@@ -35,7 +35,7 @@ unique_ptr<DFSM> fsm;
 	com; \
 	auto end = chrono::system_clock::now(); \
 	chrono::duration<double> elapsed_seconds = end - start;\
-	printf("time_elapsed:\t%fs\n",elapsed_seconds.count());
+	std::cerr << "time_elapsed:\t" << elapsed_seconds.count() << "s" << std::endl;
 
 static void printTS(sequence_set_t& TS) {
 	FSMlib::PrefixSet ps;
@@ -54,11 +54,11 @@ static void printTS(sequence_set_t& TS) {
 }
 
 static void print_help() {
-	std::cout << "FSMlib -f [path to the FSM file] " << std::endl;
+	std::cout << "FSMlib -f [path to the FSM file in Soucha's format] " << std::endl;
 	std::cout << "  Optional parameters:" << std::endl;
 	std::cout << "\t-es [0-9]+               // Number of extra states (Default: 0)" << std::endl;
 	std::cout << "\t-m {w,wp,hsi,h,spy,spyh} // Testing method (Default: w method)" << std::endl;
-	std::cout << "\t-is_dot                  // FSM is a .dot file (Default: kiss)" << std::endl;
+	//std::cout << "\t-is_dot                  // FSM is a .dot file (Default: kiss)" << std::endl;
 }
 
 
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 			else if (strcmp(argv[i], "-is_dot") == 0) {//testing method
 				is_dot = true;
 			}
-			else if (strcmp(argv[i], "-help") == 0) {//help menu
+			else if (strcmp(argv[i], "-help") == 0 || strcmp(argv[i], "-h") == 0) {//help menu
 				print_help();
 				return 0;
 			}

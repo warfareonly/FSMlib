@@ -12,4 +12,5 @@ Debug
 Release
 
 **/tmp/**
-data/FSMmodels
+data/**
+# data/FSMmodels

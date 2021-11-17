@@ -16,10 +16,10 @@
 #
 
 VPATH = FSMlib:FSMlib/Model:FSMlib/Sequences:FSMlib/Testing:FSMdevel
-BUILD_DIR = x64
+BUILD_DIR = build
 FSMLIB_DIR = FSMlib_bin
 
-FSMLIB_TARGET = $(BUILD_DIR)/FSMlib
+FSMLIB_TARGET = $(BUILD_DIR)/fsm_lib
 
 $(shell mkdir -p $(BUILD_DIR)/$(FSMLIB_DIR) >/dev/null)
 
@@ -35,18 +35,19 @@ objects = stdafx.o FSMlib.o PrefixSet.o UnionFind.o \
 OBJ = $(addprefix $(BUILD_DIR)/$(FSMLIB_DIR)/,$(objects))
 
 all: FSMlib
-	echo build
+	@echo "Only 64-bit platforms are supported."
+	@echo "Done"
 
 CPPLAGS := -Wall -Wextra
 
 $(OBJ): FSMtypes.h
 
 FSMlib: $(OBJ)
-	g++ -m64 -std=c++17 -lstdc++fs -o $(FSMLIB_TARGET) $(OBJ)
+	@ g++ -m64 -std=c++17 -lstdc++fs -o $(FSMLIB_TARGET) $(OBJ)
 
 $(BUILD_DIR)/$(FSMLIB_DIR)/%.o : %.cpp
 #%.o : %.cpp $(BUILD_DIR)/$(FSMLIB_DIR)/%.o.d
-	g++ -I"FSMlib/" -m64 -std=c++17 -MMD -MP -MF "${@:.o=.d}" -o $@ -c $<
+	@ g++ -I"FSMlib/" -m64 -std=c++17 -MMD -MP -MF "${@:.o=.d}" -o $@ -c $<
 
 $(BUILD_DIR)/$(FSMLIB_DIR)/%.d: ;
 .PRECIOUS: $(BUILD_DIR)/$(FSMLIB_DIR)/%.d
@@ -56,4 +57,4 @@ $(BUILD_DIR)/$(FSMLIB_DIR)/%.d: ;
 
 .PHONY : clean
 clean :
-	rm -rv  $(BUILD_DIR)/$(FSMLIB_DIR)/*.o $(BUILD_DIR)/$(FSMLIB_DIR)/*.d $(FSMLIB_TARGET)
+	rm -r  $(BUILD_DIR)

@@ -2,6 +2,7 @@
 **/x64/*
 **/ipch/*
 **/diagnostics/*
+**/build/*
 
 *.opensdf
 *.suo
@@ -11,4 +12,5 @@ Debug
 Release
 
 **/tmp/**
-data/FSMmodels
+data/**
+# data/FSMmodels

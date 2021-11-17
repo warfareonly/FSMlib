@@ -2,6 +2,7 @@
 **/x64/*
 **/ipch/*
 **/diagnostics/*
+**/build/*
 
 *.opensdf
 *.suo

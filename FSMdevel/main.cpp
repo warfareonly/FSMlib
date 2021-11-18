@@ -29,14 +29,6 @@
 #include<iostream>
 
 unique_ptr<DFSM> fsm;
-static bool debug_mode = false;
-
-#define COMPUTATION_TIME(com) \
-	auto start = chrono::system_clock::now(); \
-	com; \
-	auto end = chrono::system_clock::now(); \
-	chrono::duration<double> elapsed_seconds = end - start;\
-	if (debug_mode) std::cerr << "time_elapsed:\t" << elapsed_seconds.count() << "s" << std::endl;
 
 static void printTS(sequence_set_t& TS) {
 	FSMlib::PrefixSet ps;
@@ -48,10 +40,6 @@ static void printTS(sequence_set_t& TS) {
 		printf("tc_%d:\t%s\n", test_id, FSMmodel::getInSequenceAsString(cSeq).c_str());
 		test_id += 1;
 	}
-	if (debug_mode) std::cerr << "total_resets:\t" << TS.size() << std::endl;
-	if (debug_mode) std::cerr << "total_length:\t" << len << std::endl;
-	//auto syms = ps.getNumberOfSymbols();
-	//printf("%d,%d,%d,%f,%d,%f\n", TS.size(), len, TS.size()+len, double(len)/TS.size(), syms, double(syms)/len);
 }
 
 static void print_help() {
@@ -59,7 +47,6 @@ static void print_help() {
 	std::cout << "  Optional parameters:" << std::endl;
 	std::cout << "\t-es [0-9]+               // Number of extra states (Default: 0)" << std::endl;
 	std::cout << "\t-m {w,wp,hsi,h,spy,spyh} // Testing method (Default: w method)" << std::endl;
-	//std::cout << "\t-is_dot                  // FSM is a .dot file (Default: kiss)" << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -81,9 +68,6 @@ int main(int argc, char** argv) {
 			else if (strcmp(argv[i], "-m") == 0) {//testing method
 				method = string(argv[i+1]);
 			}
-			else if (strcmp(argv[i], "-debug") == 0) {//debug mode
-				debug_mode = true;
-			}
 			else if (strcmp(argv[i], "-help") == 0 || strcmp(argv[i], "-h") == 0) {//help menu
 				print_help();
 				return 0;
@@ -97,43 +81,32 @@ int main(int argc, char** argv) {
 	}
 	else {
 		fsm = FSMmodel::loadFSM(fileName);
-		if (debug_mode) std::cerr << "fsm_name:\t" << fileName << std::endl;
 	}
-
-	if (debug_mode) std::cerr << "ctt:\t" << method << std::endl;
-	if (debug_mode) std::cerr << "es:\t" << ES << std::endl;
 
 	if (method.compare("w") == 0) {// generate tests using the w method
-		COMPUTATION_TIME(auto TS = W_method(fsm, ES););  printTS(TS);
+		auto TS = W_method(fsm, ES);
+		printTS(TS);
 	}
 	else if (method.compare("wp") == 0) {// generate tests using the wp method
-		COMPUTATION_TIME(auto TS = Wp_method(fsm, ES););  printTS(TS);
+		auto TS = Wp_method(fsm, ES);
+		printTS(TS);
 	}
 	else if (method.compare("hsi") == 0) {// generate tests using the hsi method
-		COMPUTATION_TIME(auto TS = HSI_method(fsm, ES););  printTS(TS);
+		auto TS = HSI_method(fsm, ES);
+		printTS(TS);
 	}
 	else if (method.compare("h") == 0) {// generate tests using the h method
-		COMPUTATION_TIME(auto TS = H_method(fsm, ES););  printTS(TS);
+		auto TS = H_method(fsm, ES);
+		printTS(TS);
 	}
 	else if (method.compare("spy") == 0) {// generate tests using the spy method
-		COMPUTATION_TIME(auto TS = SPY_method(fsm, ES););  printTS(TS);
+		auto TS = SPY_method(fsm, ES);
+		printTS(TS);
 	}
 	else if (method.compare("spyh") == 0) {// generate tests using the spyh method
-		COMPUTATION_TIME(auto TS = SPYH_method(fsm, ES););  printTS(TS);
+		auto TS = SPYH_method(fsm, ES);
+		printTS(TS);
 	}
-	// else if (method.compare("s") == 0) {// generate tests using the s method
-	// 	COMPUTATION_TIME(auto TS = S_method(fsm, ES););  printTS(TS);
-	// }
-	// else {
-	// 	auto st = getSplittingTree(fsm, true);
-	// 	auto hsiST = getHarmonizedStateIdentifiersFromSplittingTree(fsm, st);
-	// 	if (method.compare("hsi_st") == 0) {// generate tests using the hsi method using splitting tree 
-	// 		COMPUTATION_TIME(auto TS = HSI_method(fsm, ES, hsiST););  printTS(TS);
-	// 	}
-	// 	else if (method.compare("spy_st") == 0) {// generate tests using the spy method using splitting tree 
-	// 		COMPUTATION_TIME(auto TS = SPY_method(fsm, ES, hsiST););  printTS(TS);
-	// 	}
 
-	// }
 	return 0;
 }

@@ -47,8 +47,8 @@ static void printTS(sequence_set_t& TS) {
 		printf("tc_%d:\t%s\n", test_id, FSMmodel::getInSequenceAsString(cSeq).c_str());
 		test_id += 1;
 	}
-	//std::cout << "Number of resets:\t" << TS.size() << std::endl;
-	//std::cout << "Total length:\t" << len << std::endl;
+	std::cerr << "total_resets:\t" << TS.size() << std::endl;
+	std::cerr << "total_length:\t" << len << std::endl;
 	//auto syms = ps.getNumberOfSymbols();
 	//printf("%d,%d,%d,%f,%d,%f\n", TS.size(), len, TS.size()+len, double(len)/TS.size(), syms, double(syms)/len);
 }
@@ -99,11 +99,11 @@ int main(int argc, char** argv) {
 	}
 	else {
 		fsm = FSMmodel::loadFSM(fileName);
-		//std::cout << "FSM name:\t" << fileName << std::endl;
+		std::cerr << "fsm_name:\t" << fileName << std::endl;
 	}
 
-	//std::cout << "Testing method:\t" << method << std::endl;
-	//std::cout << "Number of extra states:\t" << ES << std::endl;
+	std::cerr << "ctt:\t" << method << std::endl;
+	std::cerr << "es:\t" << ES << std::endl;
 
 	if (method.compare("w")) {// generate tests using the w method
 		COMPUTATION_TIME(auto TS = W_method(fsm, ES););  printTS(TS);

@@ -35,7 +35,7 @@ unique_ptr<DFSM> fsm;
 	com; \
 	auto end = chrono::system_clock::now(); \
 	chrono::duration<double> elapsed_seconds = end - start;\
-	std::cerr << "time_elapsed:\t" << elapsed_seconds.count() << "s" << std::endl;
+	//std::cerr << "time_elapsed:\t" << elapsed_seconds.count() << "s" << std::endl;
 
 static void printTS(sequence_set_t& TS) {
 	FSMlib::PrefixSet ps;
@@ -47,8 +47,8 @@ static void printTS(sequence_set_t& TS) {
 		printf("tc_%d:\t%s\n", test_id, FSMmodel::getInSequenceAsString(cSeq).c_str());
 		test_id += 1;
 	}
-	std::cerr << "total_resets:\t" << TS.size() << std::endl;
-	std::cerr << "total_length:\t" << len << std::endl;
+	//std::cerr << "total_resets:\t" << TS.size() << std::endl;
+	//std::cerr << "total_length:\t" << len << std::endl;
 	//auto syms = ps.getNumberOfSymbols();
 	//printf("%d,%d,%d,%f,%d,%f\n", TS.size(), len, TS.size()+len, double(len)/TS.size(), syms, double(syms)/len);
 }
@@ -68,7 +68,6 @@ int main(int argc, char** argv) {
 	int ES = 0;
 	string method = "w";
 	string fileName = "fsm.in";
-	bool is_dot = false;
 	bool use_cin = true;
 
 	if (argc > 1) {
@@ -83,9 +82,6 @@ int main(int argc, char** argv) {
 			else if (strcmp(argv[i], "-m") == 0) {//testing method
 				method = string(argv[++i]);
 			}
-			else if (strcmp(argv[i], "-is_dot") == 0) {//testing method
-				is_dot = true;
-			}
 			else if (strcmp(argv[i], "-help") == 0 || strcmp(argv[i], "-h") == 0) {//help menu
 				print_help();
 				return 0;
@@ -99,40 +95,40 @@ int main(int argc, char** argv) {
 	}
 	else {
 		fsm = FSMmodel::loadFSM(fileName);
-		std::cerr << "fsm_name:\t" << fileName << std::endl;
+		//std::cerr << "fsm_name:\t" << fileName << std::endl;
 	}
 
-	std::cerr << "ctt:\t" << method << std::endl;
-	std::cerr << "es:\t" << ES << std::endl;
+	//std::cerr << "ctt:\t" << method << std::endl;
+	//std::cerr << "es:\t" << ES << std::endl;
 
-	if (method.compare("w")) {// generate tests using the w method
+	if (method.compare("w") == 0) {// generate tests using the w method
 		COMPUTATION_TIME(auto TS = W_method(fsm, ES););  printTS(TS);
 	}
-	else if (method.compare("wp")) {// generate tests using the wp method
+	else if (method.compare("wp") == 0) {// generate tests using the wp method
 		COMPUTATION_TIME(auto TS = Wp_method(fsm, ES););  printTS(TS);
 	}
-	else if (method.compare("hsi")) {// generate tests using the hsi method
+	else if (method.compare("hsi") == 0) {// generate tests using the hsi method
 		COMPUTATION_TIME(auto TS = HSI_method(fsm, ES););  printTS(TS);
 	}
-	else if (method.compare("h")) {// generate tests using the h method
+	else if (method.compare("h") == 0) {// generate tests using the h method
 		COMPUTATION_TIME(auto TS = H_method(fsm, ES););  printTS(TS);
 	}
-	else if (method.compare("spy")) {// generate tests using the spy method
+	else if (method.compare("spy") == 0) {// generate tests using the spy method
 		COMPUTATION_TIME(auto TS = SPY_method(fsm, ES););  printTS(TS);
 	}
-	else if (method.compare("spyh")) {// generate tests using the spyh method
+	else if (method.compare("spyh") == 0) {// generate tests using the spyh method
 		COMPUTATION_TIME(auto TS = SPYH_method(fsm, ES););  printTS(TS);
 	}
-	// else if (method.compare("s")) {// generate tests using the s method
+	// else if (method.compare("s") == 0) {// generate tests using the s method
 	// 	COMPUTATION_TIME(auto TS = S_method(fsm, ES););  printTS(TS);
 	// }
 	// else {
 	// 	auto st = getSplittingTree(fsm, true);
 	// 	auto hsiST = getHarmonizedStateIdentifiersFromSplittingTree(fsm, st);
-	// 	if (method.compare("hsi_st")) {// generate tests using the hsi method using splitting tree 
+	// 	if (method.compare("hsi_st") == 0) {// generate tests using the hsi method using splitting tree 
 	// 		COMPUTATION_TIME(auto TS = HSI_method(fsm, ES, hsiST););  printTS(TS);
 	// 	}
-	// 	else if (method.compare("spy_st")) {// generate tests using the spy method using splitting tree 
+	// 	else if (method.compare("spy_st") == 0) {// generate tests using the spy method using splitting tree 
 	// 		COMPUTATION_TIME(auto TS = SPY_method(fsm, ES, hsiST););  printTS(TS);
 	// 	}
 

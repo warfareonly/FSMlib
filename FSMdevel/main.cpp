@@ -29,13 +29,14 @@
 #include<iostream>
 
 unique_ptr<DFSM> fsm;
+static bool debug_mode = false;
 
 #define COMPUTATION_TIME(com) \
 	auto start = chrono::system_clock::now(); \
 	com; \
 	auto end = chrono::system_clock::now(); \
 	chrono::duration<double> elapsed_seconds = end - start;\
-	//std::cerr << "time_elapsed:\t" << elapsed_seconds.count() << "s" << std::endl;
+	if (debug_mode) std::cerr << "time_elapsed:\t" << elapsed_seconds.count() << "s" << std::endl;
 
 static void printTS(sequence_set_t& TS) {
 	FSMlib::PrefixSet ps;
@@ -47,8 +48,8 @@ static void printTS(sequence_set_t& TS) {
 		printf("tc_%d:\t%s\n", test_id, FSMmodel::getInSequenceAsString(cSeq).c_str());
 		test_id += 1;
 	}
-	//std::cerr << "total_resets:\t" << TS.size() << std::endl;
-	//std::cerr << "total_length:\t" << len << std::endl;
+	if (debug_mode) std::cerr << "total_resets:\t" << TS.size() << std::endl;
+	if (debug_mode) std::cerr << "total_length:\t" << len << std::endl;
 	//auto syms = ps.getNumberOfSymbols();
 	//printf("%d,%d,%d,%f,%d,%f\n", TS.size(), len, TS.size()+len, double(len)/TS.size(), syms, double(syms)/len);
 }
@@ -61,8 +62,6 @@ static void print_help() {
 	//std::cout << "\t-is_dot                  // FSM is a .dot file (Default: kiss)" << std::endl;
 }
 
-
-
 int main(int argc, char** argv) {
 
 	int ES = 0;
@@ -73,14 +72,17 @@ int main(int argc, char** argv) {
 	if (argc > 1) {
 		for (int i = 1; i < argc; i++) {
 			if (strcmp(argv[i], "-f") == 0) {//number of extra states
-				fileName = string(argv[++i]);
+				fileName = string(argv[i+1]);
 				use_cin = false;
 			}
 			else if (strcmp(argv[i], "-es") == 0) {//number of extra states
-				ES = atoi(argv[++i]);
+				ES = atoi(argv[i+1]);
 			}
 			else if (strcmp(argv[i], "-m") == 0) {//testing method
-				method = string(argv[++i]);
+				method = string(argv[i+1]);
+			}
+			else if (strcmp(argv[i], "-debug") == 0) {//debug mode
+				debug_mode = true;
 			}
 			else if (strcmp(argv[i], "-help") == 0 || strcmp(argv[i], "-h") == 0) {//help menu
 				print_help();
@@ -95,11 +97,11 @@ int main(int argc, char** argv) {
 	}
 	else {
 		fsm = FSMmodel::loadFSM(fileName);
-		//std::cerr << "fsm_name:\t" << fileName << std::endl;
+		if (debug_mode) std::cerr << "fsm_name:\t" << fileName << std::endl;
 	}
 
-	//std::cerr << "ctt:\t" << method << std::endl;
-	//std::cerr << "es:\t" << ES << std::endl;
+	if (debug_mode) std::cerr << "ctt:\t" << method << std::endl;
+	if (debug_mode) std::cerr << "es:\t" << ES << std::endl;
 
 	if (method.compare("w") == 0) {// generate tests using the w method
 		COMPUTATION_TIME(auto TS = W_method(fsm, ES););  printTS(TS);

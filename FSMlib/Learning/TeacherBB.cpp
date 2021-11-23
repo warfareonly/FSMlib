@@ -15,7 +15,7 @@
 * FSMlib. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stdafx.h"
+#include "../stdafx.h"
 
 #include "TeacherBB.h"
 

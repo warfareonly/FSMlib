@@ -14,21 +14,25 @@
 * You should have received a copy of the GNU General Public License along with
 * FSMlib. If not, see <http://www.gnu.org/licenses/>.
 */
-#include "stdafx.h"
+#include "../stdafx.h"
 
 #include "BlackBoxDFSM.h"
 
-vector<input_t> BlackBoxDFSM::getNextPossibleInputs() {
+vector<input_t> BlackBoxDFSM::getNextPossibleInputs()
+{
 	vector<input_t> inputs;
-	for (input_t i = 0; i < _fsm->getNumberOfInputs(); i++) {
+	for (input_t i = 0; i < _fsm->getNumberOfInputs(); i++)
+	{
 		if (_fsm->getNextState(_currState, i) != NULL_STATE)
 			inputs.push_back(i);
 	}
 	return inputs;
 }
 
-void BlackBoxDFSM::reset() {
-	if (!_isResettable) {
+void BlackBoxDFSM::reset()
+{
+	if (!_isResettable)
+	{
 		ERROR_MESSAGE("BlackBoxDFSM::reset - cannot be reset!");
 		return;
 	}
@@ -36,32 +40,39 @@ void BlackBoxDFSM::reset() {
 	_currState = 0;
 }
 
-output_t BlackBoxDFSM::query(input_t input) {
+output_t BlackBoxDFSM::query(input_t input)
+{
 	_querySymbolCounter++;
 	auto ns = _fsm->getNextState(_currState, input);
 	auto output = WRONG_OUTPUT;
-	if ((ns != NULL_STATE) && (ns != WRONG_STATE)) {
+	if ((ns != NULL_STATE) && (ns != WRONG_STATE))
+	{
 		output = _fsm->getOutput(_currState, input);
 		_currState = ns;
 	}
 	return output;
 }
 
-sequence_out_t BlackBoxDFSM::query(const sequence_in_t& inputSequence) {
-	if (inputSequence.empty()) return sequence_out_t();
+sequence_out_t BlackBoxDFSM::query(const sequence_in_t &inputSequence)
+{
+	if (inputSequence.empty())
+		return sequence_out_t();
 	sequence_out_t output;
-	for (const auto& input : inputSequence) {
+	for (const auto &input : inputSequence)
+	{
 		output.emplace_back(query(input));
 	}
 	return output;
 }
 
-output_t BlackBoxDFSM::resetAndQuery(input_t input) {
+output_t BlackBoxDFSM::resetAndQuery(input_t input)
+{
 	reset();
 	return query(input);
 }
 
-sequence_out_t BlackBoxDFSM::resetAndQuery(const sequence_in_t& inputSequence) {
+sequence_out_t BlackBoxDFSM::resetAndQuery(const sequence_in_t &inputSequence)
+{
 	reset();
 	return query(inputSequence);
 }

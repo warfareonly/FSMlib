@@ -14,58 +14,73 @@
 * You should have received a copy of the GNU General Public License along with
 * FSMlib. If not, see <http://www.gnu.org/licenses/>.
 */
-#include "stdafx.h"
+#include "../stdafx.h"
 
 #include "FSMtesting.h"
 #include "../PrefixSet.h"
 
 using namespace FSMsequence;
 
-namespace FSMtesting {
-	sequence_set_t HSI_method(const unique_ptr<DFSM>& fsm, int extraStates, const vector<sequence_set_t>& HSI) {
+namespace FSMtesting
+{
+	sequence_set_t HSI_method(const unique_ptr<DFSM> &fsm, int extraStates, const vector<sequence_set_t> &HSI)
+	{
 		RETURN_IF_UNREDUCED(fsm, "FSMtesting::HSI_method", sequence_set_t());
-		if (extraStates < 0) {
+		if (extraStates < 0)
+		{
 			return sequence_set_t();
 		}
 		auto transitionCover = getTransitionCover(fsm);
 		auto traversalSet = getTraversalSet(fsm, extraStates);
 		vector<sequence_set_t> HSItmp, &H(HSItmp);
-		if (HSI.empty()) HSItmp = getHarmonizedStateIdentifiers(fsm);
-		else H = HSI;
+		if (HSI.empty())
+			HSItmp = getHarmonizedStateIdentifiers(fsm);
+		else
+			H = HSI;
 		bool startWithStout = !H[0].begin()->empty() && (H[0].begin()->front() == STOUT_INPUT);
-		
+
 		FSMlib::PrefixSet pset;
-		for (const auto& trSeq : transitionCover) {
+		for (const auto &trSeq : transitionCover)
+		{
 			state_t state = fsm->getEndPathState(0, trSeq);
-			if (state == WRONG_STATE) continue;
-			for (const auto& cSeq : H[state]) {
+			if (state == WRONG_STATE)
+				continue;
+			for (const auto &cSeq : H[state])
+			{
 				sequence_in_t testSeq(trSeq);
-				if (startWithStout) {
+				if (startWithStout)
+				{
 					testSeq.push_front(STOUT_INPUT);
-					testSeq.pop_back();// the last STOUT_INPUT (it will be at the beginning of appended cSeq)
+					testSeq.pop_back(); // the last STOUT_INPUT (it will be at the beginning of appended cSeq)
 				}
 				testSeq.insert(testSeq.end(), cSeq.begin(), cSeq.end());
 				pset.insert(move(testSeq));
 			}
-			for (const auto& extSeq : traversalSet) {
+			for (const auto &extSeq : traversalSet)
+			{
 				state_t endState = fsm->getEndPathState(state, extSeq);
-				if (endState == WRONG_STATE) {
-					if (extSeq.size() == (1 + fsm->isOutputState())) {
+				if (endState == WRONG_STATE)
+				{
+					if (extSeq.size() == (1 + fsm->isOutputState()))
+					{
 						sequence_in_t testSeq(trSeq);
 						testSeq.emplace_back(extSeq.front());
-						if (startWithStout) {
+						if (startWithStout)
+						{
 							testSeq.push_front(STOUT_INPUT);
 						}
 						pset.insert(move(testSeq));
 					}
 					continue;
 				}
-				for (const auto& cSeq : H[endState]) {
+				for (const auto &cSeq : H[endState])
+				{
 					sequence_in_t testSeq(trSeq);
 					testSeq.insert(testSeq.end(), extSeq.begin(), extSeq.end());
-					if (startWithStout) {
+					if (startWithStout)
+					{
 						testSeq.push_front(STOUT_INPUT);
-						testSeq.pop_back();// the last STOUT_INPUT (it will be at the beginning of appended cSeq)
+						testSeq.pop_back(); // the last STOUT_INPUT (it will be at the beginning of appended cSeq)
 					}
 					testSeq.insert(testSeq.end(), cSeq.begin(), cSeq.end());
 					pset.insert(move(testSeq));

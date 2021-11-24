@@ -35,19 +35,6 @@ set(ROOT_NAMESPACE FSMdevel)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VS_GLOBAL_KEYWORD "Win32Proj"
 )
-# if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Mixed Platforms")
-#     set_target_properties(${PROJECT_NAME} PROPERTIES
-#         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
-#     )
-# elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
-#     set_target_properties(${PROJECT_NAME} PROPERTIES
-#         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
-#     )
-# elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-#     set_target_properties(${PROJECT_NAME} PROPERTIES
-#         INTERPROCEDURAL_OPTIMIZATION         "TRUE"
-#     )
-# endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION "TRUE"
 )
@@ -198,8 +185,4 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Dependencies
 ################################################################################
 # Link with other targets.
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    # BBport
-    FSMlib
-)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE FSMlib)

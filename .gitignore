@@ -1,3 +1,7 @@
+# Executable
+fsm_lib
+
+
 # Ignore the build folder
 **/x64/*
 **/ipch/*
